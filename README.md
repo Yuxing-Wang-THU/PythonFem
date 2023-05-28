@@ -45,7 +45,7 @@ Args
 '--implict', action='store_true', help='Implict Euler Method, for STVK and Neohookean'
 ```
 #### Visual Results
-**<center>Symplectic Euler Methods< /center>**
+**<p align="center">Symplectic Euler Methods</p>**
 
 <img src="./gifs/single_2D_Linear_implicit_False.gif" div align=middle width = "49%" /><img src="./gifs/single_2D_STVK_implicit_False.gif" div align=middle width = "49%" />
 
