@@ -46,6 +46,7 @@ Args
 ```
 #### Visual Results
 **<center>Symplectic Euler Methods</center>**
+
 <img src="./gifs/single_2D_Linear_implicit_False.gif" div align=middle width = "45%" /><img src="./gifs/single_2D_STVK_implicit_False.gif" div align=middle width = "45%" />
 
 <img src="./gifs/single_2D_Co-rotated_implicit_False.gif" div align=middle width = "45%" /><img src="./gifs/single_2D_Neohookean_implicit_False.gif" div align=middle width = "45%" />
@@ -78,15 +79,19 @@ Args
 <center>Symplectic Euler Methods</center>
 
 **<center>Linear Elasticity</center>**
+
 <img src="./gifs/Multiple_2D_Linear_implicit_False_bend_8.gif" div align=middle width = "45%" /><img src="./gifs/Multiple_2D_Linear_implicit_False_fall_8.gif" div align=middle width = "45%" />
 
 **<center>St. Venant-Kirchhoff </center>**
+
 <img src="./gifs/Multiple_2D_STVK_implicit_False_bend_8.gif" div align=middle width = "45%" /><img src="./gifs/Multiple_2D_STVK_implicit_False_fall_8.gif" div align=middle width = "45%" />
 
 **<center>Corotated linear elasticity</center>**
+
 <img src="./gifs/Multiple_2D_Co-rotated_implicit_False_bend_8.gif" div align=middle width = "45%" /><img src="./gifs/Multiple_2D_Co-rotated_implicit_False_fall_8.gif" div align=middle width = "45%" />
 
 **<center>Neohookean elasticity</center>**
+
 <img src="./gifs/Multiple_2D_Neohookean_implicit_False_bend_8.gif" div align=middle width = "45%" /><img src="./gifs/Multiple_2D_Neohookean_implicit_False_fall_8.gif" div align=middle width = "45%" />
 
 ## Reference
