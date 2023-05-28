@@ -86,7 +86,7 @@ Args
 <img src="./gifs/Multiple_2D_Co-rotated_implicit_False_bend_8.gif" div align=middle width = "45%" /><img src="./gifs/Multiple_2D_Co-rotated_implicit_False_fall_8.gif" div align=middle width = "45%" />
 
 **<center>Neohookean elasticity</center>**
-<img src="./gifs/Multiple_2D_Neohookean_implicit_False_bend_8.gif" width = "45%" /><img src="./gifs/Multiple_2D_Neohookean_implicit_False_fall_8.gif"  width = "45%" />
+<img src="./gifs/Multiple_2D_Neohookean_implicit_False_bend_8.gif" div align=middle width = "45%" /><img src="./gifs/Multiple_2D_Neohookean_implicit_False_fall_8.gif" div align=middle width = "45%" />
 
 ## Reference
 [FEM Simulation of 3D Deformable Solids: A practitioner's guide to theory, discretization and model reduction](http://viterbi-web.usc.edu/~jbarbic/femdefo/)
