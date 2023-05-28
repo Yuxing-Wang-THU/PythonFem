@@ -44,7 +44,7 @@ Args
 '--fix', type=bool, default=True, help='Fix a point on the wall' 
 '--implict', action='store_true', help='Implict Euler Method, for STVK and Neohookean'
 ```
-####Visual Results
+#### Visual Results
 **<center>Symplectic Euler Methods</center>**
 <img src="./gifs/single_2D_Linear_implicit_False.gif" div align=middle width = "45%" /><img src="./gifs/single_2D_STVK_implicit_False.gif" div align=middle width = "45%" />
 <img src="./gifs/single_2D_Co-rotated_implicit_False.gif" div align=middle width = "45%" /><img src="./gifs/single_2D_Neohookean_implicit_False.gif" div align=middle width = "45%" />
@@ -73,7 +73,7 @@ Args
 '--mass', type=float, default=1.0, help='Mass of the point'
 '--implict', action='store_true', help='Implict Euler Method, for STVK and Neohookean'
 ```
-####Visual Results
+#### Visual Results
 <center>Symplectic Euler Methods</center>
 
 **<center>Linear Elasticity</center>**
@@ -86,7 +86,7 @@ Args
 <img src="./gifs/Multiple_2D_Co-rotated_implicit_False_bend_8.gif" div align=middle width = "45%" /><img src="./gifs/Multiple_2D_Co-rotated_implicit_False_fall_8.gif" div align=middle width = "45%" />
 
 **<center>Neohookean elasticity</center>**
-<img src="./gifs/Multiple_2D_Neohookean_implicit_False_bend_8.gif" div align=middle width = "45%" /><img src="./gifs/Multiple_2D_Neohookean_implicit_False_fall_8.gif" div align=middle width = "45%" />
+<img src="./gifs/Multiple_2D_Neohookean_implicit_False_bend_8.gif" width = "45%" /><img src="./gifs/Multiple_2D_Neohookean_implicit_False_fall_8.gif"  width = "45%" />
 
 ## Reference
 [FEM Simulation of 3D Deformable Solids: A practitioner's guide to theory, discretization and model reduction](http://viterbi-web.usc.edu/~jbarbic/femdefo/)
