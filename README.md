@@ -51,7 +51,7 @@ Args
 
 <img src="./gifs/single_2D_Co-rotated_implicit_False.gif" div align=middle width = "49%" /><img src="./gifs/single_2D_Neohookean_implicit_False.gif" div align=middle width = "49%" />
 
-**<center>Implict Euler Methods< /center>**
+**<p align="center">Implict Euler Methods</p>**
 
 <img src="./gifs/single_2D_STVK_implicit_True.gif" div align=middle width = "49%" /><img src="./gifs/single_2D_Neohookean_implicit_True.gif" div align=middle width = "49%" />
 
@@ -76,21 +76,21 @@ Args
 '--implict', action='store_true', help='Implict Euler Method, for STVK and Neohookean'
 ```
 #### Visual Results
-<center>Symplectic Euler Methods< /center>
+<p align="center">Symplectic Euler Methods</p>
 
-**<center>Linear Elasticity< /center>**
+**<p align="center">Linear Elasticity</p>**
 
 <img src="./gifs/Multiple_2D_Linear_implicit_False_bend_8.gif" div align=middle width = "49%" /><img src="./gifs/Multiple_2D_Linear_implicit_False_fall_8.gif" div align=middle width = "49%" />
 
-**<center>St. Venant-Kirchhoff < /center>**
+**<p align="center">St. Venant-Kirchhoff</p>**
 
 <img src="./gifs/Multiple_2D_STVK_implicit_False_bend_8.gif" div align=middle width = "49%" /><img src="./gifs/Multiple_2D_STVK_implicit_False_fall_8.gif" div align=middle width = "49%" />
 
-**<center>Corotated linear elasticity< /center>**
+**<p align="center">Corotated linear elasticity</p>**
 
 <img src="./gifs/Multiple_2D_Co-rotated_implicit_False_bend_8.gif" div align=middle width = "49%" /><img src="./gifs/Multiple_2D_Co-rotated_implicit_False_fall_8.gif" div align=middle width = "49%"/>
 
-**<center>Neohookean elasticity< /center>**
+**<p align="center">Neohookean elasticity</p>**
 
 <img src="./gifs/Multiple_2D_Neohookean_implicit_False_bend_8.gif" div align=middle width = "49%" /><img src="./gifs/Multiple_2D_Neohookean_implicit_False_fall_8.gif" div align=middle width = "49%" />
 
