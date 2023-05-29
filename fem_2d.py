@@ -1,5 +1,4 @@
 from matplotlib import pyplot as plt
-from matplotlib.patches import Wedge
 from matplotlib import cm 
 import numpy as np
 import imageio
@@ -8,7 +7,7 @@ import os
 
 model_list = {0:'Linear', 1:'STVK', 2:'Co-rotated', 3: 'Neohookean'}
 
-def rect_collision(point, rect_pos):
+def judge(point, rect_pos):
     if point[0] < rect_pos[0][0]:
         return False
     if point[1] < rect_pos[0][1]:
@@ -21,19 +20,14 @@ def rect_collision(point, rect_pos):
 
 # Mesh
 def get_mesh(args):
-    # Element的索引，每一个element包含三个点的索引
     element_idx = np.zeros((args.element_num,3),dtype = int)
-
-    # 为每个节点构建对应的index
     cnt = 0
     for j in range(args.N_y-1):
         for i in range(args.N_x-1):
-            # 第1个三角形，下三角
             idx = j * args.N_x + i
             element_idx[cnt,0] = idx
             element_idx[cnt,1] = idx + 1
             element_idx[cnt,2] = idx + args.N_x
-            # 第2个三角形，上三角
             cnt += 1
             element_idx[cnt,0] = idx + 1
             element_idx[cnt,1] = idx + args.N_x + 1
@@ -72,11 +66,6 @@ def get_area(points):
     return 0.5  *  (points[0,0] * (points[1,1] - points[2,1])
                   + points[1,0] * (points[2,1] - points[0,1]) 
                   + points[2,0] * (points[0,1] - points[1,1]))
-    
-def vec_to_array(vec, array):
-    for i in range(vec.shape[0]):
-        array[:,i] = vec[i].flatten("F")
-    return array 
 
 # Linear elasity
 def linear_elasity(F,mu,lam):
@@ -96,7 +85,7 @@ def linear_elasity(F,mu,lam):
 def stvk(F,mu,lam):
     # Green strain tensor  e = 1/2(F^TF-I) 
     strain = (np.dot(F.T,F) - np.identity(2)) * 0.5
-    # Calculate Energy density function for updating position
+    # Calculate Energy density
     doubleInner = strain[0,0]*strain[0,0] + strain[1,0]*strain[1,0] + strain[0,1]*strain[0,1] + strain[1,1]*strain[1,1]
     # Ψ(F) = µe:e + λ/2 x trace^2(strain)
     energy = doubleInner * mu + lam * 0.5 * (strain[0,0] + strain[1,1]) ** 2
@@ -160,6 +149,7 @@ def implicit_euler_stvk(args, B_m, F, strain, nodal_force,nodal_vel, multiple=Fa
     # Implicit Euler
     # ∂D_s/∂x，其中D_s是一个2x2的矩阵，x是一个3x2的矩阵（仨点俩维度）, 因此计算出来是一个2x2x3x2的四阶张量
     # 使用向量化进行计算的话可以得到每一列,向量化后D_s是一个长度为4的向量，x是一个长度为6的向量，求Jacobin，分子主序，最后矩阵是4x6
+    # 为了方便起见，分开来算
 
     dDsdx = np.zeros((6,2,2))
     dDsdx[0,:,:] = np.array([[-1,-1],[0,0]])
@@ -187,16 +177,10 @@ def implicit_euler_stvk(args, B_m, F, strain, nodal_force,nodal_vel, multiple=Fa
     if multiple:
         return dH
     # K
-    array_H = vec_to_array(vec=dH,array=np.zeros((4,6)))
-
     K = np.zeros((6,6))
-    # 3 个顶点
     for n in range(3):
-        # 2 个维度
         for d in range(2):
-            # 第 idx 列，每列3 x 2 个元素
             idx = n * 2 + d
-            # 先填写第一第二个顶点，第零个顶点之后填
             K[2,idx] += dH[idx,0,0]
             K[3,idx] += dH[idx,1,0]
             K[4,idx] += dH[idx,0,1]
@@ -206,11 +190,13 @@ def implicit_euler_stvk(args, B_m, F, strain, nodal_force,nodal_vel, multiple=Fa
             K[1,idx] += - dH[idx,1,0] - dH[idx,1,1]
     # A
     A = args.mass * np.identity(6) -  K  * args.dt * args.dt
+
     # b
     b = np.zeros((6))
     for n in range(3):
         for d in range(2):
             b[n*2+d] = args.mass * nodal_vel[n,d] + args.dt * nodal_force[n,d]
+
     # X       
     X = np.dot(np.linalg.inv(A), b)
     for n in range(3):
@@ -224,8 +210,6 @@ def implicit_euler_stvk(args, B_m, F, strain, nodal_force,nodal_vel, multiple=Fa
 # Implict Euler method for Neohookean
 def implicit_euler_neohookean(args, B_m, F, nodal_force,nodal_vel,multiple=False):
     # Implicit Euler
-    # ∂D_s/∂x，其中D_s是一个2x2的矩阵，x是一个3x2的矩阵（仨点俩维度）, 因此计算出来是一个2x2x3x2的四阶张量
-    # 使用向量化进行计算的话可以得到每一列,向量化后D_s是一个长度为4的向量，x是一个长度为6的向量，求Jacobin，分子主序，最后矩阵是4x6
 
     dDsdx = np.zeros((6,2,2))
     dDsdx[0,:,:] = np.array([[-1,-1],[0,0]])
@@ -253,16 +237,10 @@ def implicit_euler_neohookean(args, B_m, F, nodal_force,nodal_vel,multiple=False
     if multiple:
         return dH
     # K
-    array_H = vec_to_array(vec=dH,array=np.zeros((4,6)))
-
     K = np.zeros((6,6))
-    # 3 个顶点
     for n in range(3):
-        # 2 个维度
         for d in range(2):
-            # 第 idx 列，每列3 x 2 个元素
             idx = n * 2 + d
-            # 先填写第一第二个顶点，第零个顶点之后填
             K[2,idx] += dH[idx,0,0]
             K[3,idx] += dH[idx,1,0]
             K[4,idx] += dH[idx,0,1]
@@ -272,11 +250,13 @@ def implicit_euler_neohookean(args, B_m, F, nodal_force,nodal_vel,multiple=False
             K[1,idx] += - dH[idx,1,0] - dH[idx,1,1]
     # A
     A = args.mass * np.identity(6) -  K  * args.dt * args.dt
+
     # b
     b = np.zeros((6))
     for n in range(3):
         for d in range(2):
             b[n*2+d] = args.mass * nodal_vel[n,d] + args.dt * nodal_force[n,d]
+
     # X       
     X = np.dot(np.linalg.inv(A), b)
     for n in range(3):
@@ -287,7 +267,7 @@ def implicit_euler_neohookean(args, B_m, F, nodal_force,nodal_vel,multiple=False
 
     return nodal_vel      
 
-# Make Ax=b for Implict Euler method
+# Naive Solver for Implict Euler method
 def solver(args,A,K,b,node_vel,node_force):
     for i in range(args.krow):
         for j in range(args.krow):
@@ -302,7 +282,7 @@ def solver(args,A,K,b,node_vel,node_force):
     X = np.dot(np.linalg.inv(A),b)
     return X
 
-# Simulation for a single tetrahedron
+# Simulation for a single triangle
 def run_fem_simulation_single(args):
     # Dir for saving imgs 
     try:
@@ -337,7 +317,7 @@ def run_fem_simulation_single(args):
     # Position after deformation 
     x = Afine_2D(args.ref_node_pos, args.theta, args.tx, args.ty, args.sx, args.sy)
    
-    # Plot the triangular after deformation
+    # Plot the triangle after deformation
     plt.fill(x[:,0], x[:,1], 'b')
     plt.text(0.01, 6.8, f'Init Area: {init_area}', fontsize=15, color='red')
     plt.text(1.8, 6.8, f'mu: {round(mu,2)}, lamda: {round(lam,2)}', fontsize=15, color='blue')
@@ -482,10 +462,7 @@ def run_fem_simulation_single(args):
     imageio.mimsave(f'./gifs/single_2D_{model_list[args.model]}_implicit_{args.implict}.gif', images, duration=0.01)
     shutil.rmtree("./images")
 
-
-    # Simulation
-
-# Simulation for multiple tetrahedrons
+# Simulation for multiple cubes
 def run_fem_simulation_multiple(args):
     # Make dirs
     try:
@@ -512,10 +489,13 @@ def run_fem_simulation_multiple(args):
     # Nodes
     # Init position，left down coroner
     init_x, init_y = 0.0, 4.0
+
     # dx
     cube_len = 1.0
+
     # Number of nodes (x-axis)
     N_x = args.voxelx+1
+
     # Number of nodes (y-axis)
     N_y = args.voxely+1
     args.N_x = N_x
@@ -530,7 +510,7 @@ def run_fem_simulation_multiple(args):
     # Mesh
     element_idx = get_mesh(args)
 
-    # Position,velosity and force
+    # Position, velosity and force
     node_pos = np.zeros((node_num,2),dtype = float)
     node_vel = np.zeros((node_num,2),dtype = float)
     nodal_force = np.zeros((node_num,2),dtype = float)
@@ -610,10 +590,13 @@ def run_fem_simulation_multiple(args):
                     raise    
 
                 H = -init_area * np.dot(piola,D_m[ie].transpose())
+
                 # Force 1, the first column of H
                 f1 = np.array([H[0,0],H[1,0]]) 
+
                 # Force 2, the second column of H
                 f2 = np.array([H[0,1],H[1,1]]) 
+
                 # Force 0, balanced force
                 f0 = - f1 - f2 
                
@@ -625,8 +608,10 @@ def run_fem_simulation_multiple(args):
                     if args.model == 1:
                         dH = implicit_euler_stvk(args, D_m[ie], F, strain, nodal_force, node_vel, multiple=True)
                     elif args.model == 3:
-                        dH = implicit_euler_neohookean(args, D_m[ie], F, nodal_force, node_vel,multiple=True)
+                        dH = implicit_euler_neohookean(args, D_m[ie], F, nodal_force, node_vel, multiple=True)
+                    # 3 nodes per element
                     for n in range(3):
+                        # node index
                         nidx = element_idx[ie,n]
                         for d in range(2):
                             kidx = nidx * 2 + d
@@ -644,7 +629,7 @@ def run_fem_simulation_multiple(args):
                             idx = element_idx[ie,0] * 2 + 1
                             K[idx,kidx] += - dH[didx,1,0] - dH[didx,1,1]
 
-            '''Step 6. Update positions of three points''' 
+            '''Step 6. Update position''' 
             # Update
             if not args.implict:
                 for i in range(node_num):
@@ -655,13 +640,14 @@ def run_fem_simulation_multiple(args):
                 # Add Gravity
                 for i in range(node_num):
                     nodal_force[i] += Gravity
+
                 # Implict Euler
                 X = solver(args,A,K,b,node_vel,nodal_force)
                 for i in range(node_num):
                     node_vel[i,0] = X[i * 2 + 0]
                     node_vel[i,1] = X[i * 2 + 1]
                     node_pos[i,:] += node_vel[i,:] * args.dt
-                    node_vel[i] *= np.exp(-args.dt * 5.0)
+                    # node_vel[i] *= np.exp(-args.dt * 1.0)
 
             # bend
             if args.mode == "bend":
@@ -672,20 +658,13 @@ def run_fem_simulation_multiple(args):
 
             # Boundary Condition
             for i in range(node_num):
-                # Ball boundary condition
-                # 圆心指向点的向量
+                # Ball 
                 disp = node_pos[i] - args.ball_pos
-                # 点距圆心的距离
                 disp2 = np.sum(np.square(disp))
-                # 如果小于半径，说明有碰撞
                 if disp2 <= args.ball_radius**2:
-                    # 内积，获得速度在该向量上的投影
                     NoV = node_vel[i].dot(disp)
-                    # <0，说明在挤压这个圆
                     if NoV < 0:
-                        # 把速度掰成相切的
                         node_vel[i] -= NoV * disp / disp2
-
                 # Rectangle boundary condition
                 # if rect_collision(node_pos[i], args.rectangle_pos):
                 #     if args.rectangle_pos[0][0] < node_pos[i][0] < (args.rectangle_pos[0][0]+args.rectangle_pos[1][0]):

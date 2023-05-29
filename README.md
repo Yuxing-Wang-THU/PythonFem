@@ -20,7 +20,7 @@ numpy==1.21.5
 seaborn==0.12.2
 ```
 ## Usage 
-### Single Terahedron
+### Single Triangle
 ```shell
 python main_single_2d.py
 ```
@@ -55,7 +55,7 @@ Args
 
 <img src="./gifs/single_2D_STVK_implicit_True.gif" div align=middle width = "49%" /><img src="./gifs/single_2D_Neohookean_implicit_True.gif" div align=middle width = "49%" />
 
-### Multiple Terahedrons
+### Multiple Cubes
 ```shell
 python main_multiple_2d.py
 ```

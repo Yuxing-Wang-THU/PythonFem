@@ -1,7 +1,7 @@
-from matplotlib import pyplot as plt
-import seaborn as sns
-from matplotlib.patches import Wedge
 from fem_2d import run_fem_simulation_multiple
+from matplotlib import pyplot as plt
+from matplotlib.patches import Wedge
+import seaborn as sns
 import numpy as np
 import argparse
 
@@ -27,9 +27,9 @@ if __name__ == "__main__":
                         help='Empty voxels:[],[2,3,6,7,10,11,14,15],[2,3,6,7]')
     
     # Parameters of FEM
-    parser.add_argument('--mode', type=str, default="bend",
+    parser.add_argument('--mode', type=str, default="fall",
                         help='Mode: bend,fall')
-    parser.add_argument('--model', type=int, default=0,
+    parser.add_argument('--model', type=int, default=3,
                         help='Constitutive model, 0:Linear, 1:STVK, 2:Co-rotated, 3: Neohookean')
     parser.add_argument('--Y', type=int, default=10000,
                         help='Youngs modulus')
@@ -41,7 +41,7 @@ if __name__ == "__main__":
                         help='Iteration')
     parser.add_argument('--mass', type=float, default=1.0,
                         help='Mass of the point') 
-    parser.add_argument('--implict', action='store_true',
+    parser.add_argument('--implict', action="store_true",
                         help='Implict Euler Method, for STVK and Neohookean')                               
     args = parser.parse_args()
 
