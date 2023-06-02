@@ -20,7 +20,7 @@ numpy==1.21.5
 seaborn==0.12.2
 ```
 ## Usage 
-### Single Triangle
+### Single Terahedron
 ```shell
 python main_single_2d.py
 ```
@@ -44,18 +44,16 @@ Args
 '--fix', type=bool, default=True, help='Fix a point on the wall' 
 '--implict', action='store_true', help='Implict Euler Method, for STVK and Neohookean'
 ```
-#### Visual Results
-**<p align="center">Symplectic Euler Methods</p>**
-
+####Visual Results
+**<center>Symplectic Euler Methods</center>**
 <img src="./gifs/single_2D_Linear_implicit_False.gif" div align=middle width = "49%" /><img src="./gifs/single_2D_STVK_implicit_False.gif" div align=middle width = "49%" />
-
 <img src="./gifs/single_2D_Co-rotated_implicit_False.gif" div align=middle width = "49%" /><img src="./gifs/single_2D_Neohookean_implicit_False.gif" div align=middle width = "49%" />
 
-**<p align="center">Implict Euler Methods</p>**
+**<center>Implict Euler Methods</center>**
 
 <img src="./gifs/single_2D_STVK_implicit_True.gif" div align=middle width = "49%" /><img src="./gifs/single_2D_Neohookean_implicit_True.gif" div align=middle width = "49%" />
 
-### Multiple Cubes
+### Multiple Terahedrons
 ```shell
 python main_multiple_2d.py
 ```
@@ -75,24 +73,29 @@ Args
 '--mass', type=float, default=1.0, help='Mass of the point'
 '--implict', action='store_true', help='Implict Euler Method, for STVK and Neohookean'
 ```
-#### Visual Results
-<p align="center">Symplectic Euler Methods</p>
+####Visual Results
+<center>Symplectic Euler Methods</center>
 
-**<p align="center">Linear Elasticity</p>**
-
+**<center>Linear Elasticity</center>**
 <img src="./gifs/Multiple_2D_Linear_implicit_False_bend_8.gif" div align=middle width = "49%" /><img src="./gifs/Multiple_2D_Linear_implicit_False_fall_8.gif" div align=middle width = "49%" />
 
-**<p align="center">St. Venant-Kirchhoff</p>**
-
+**<center>St. Venant-Kirchhoff </center>**
 <img src="./gifs/Multiple_2D_STVK_implicit_False_bend_8.gif" div align=middle width = "49%" /><img src="./gifs/Multiple_2D_STVK_implicit_False_fall_8.gif" div align=middle width = "49%" />
 
-**<p align="center">Corotated linear elasticity</p>**
+**<center>Corotated linear elasticity</center>**
+<img src="./gifs/Multiple_2D_Co-rotated_implicit_False_bend_8.gif" div align=middle width = "49%" /><img src="./gifs/Multiple_2D_Co-rotated_implicit_False_fall_8.gif" div align=middle width = "49%" />
 
-<img src="./gifs/Multiple_2D_Co-rotated_implicit_False_bend_8.gif" div align=middle width = "49%" /><img src="./gifs/Multiple_2D_Co-rotated_implicit_False_fall_8.gif" div align=middle width = "49%"/>
-
-**<p align="center">Neohookean elasticity</p>**
-
+**<center>Neohookean elasticity</center>**
 <img src="./gifs/Multiple_2D_Neohookean_implicit_False_bend_8.gif" div align=middle width = "49%" /><img src="./gifs/Multiple_2D_Neohookean_implicit_False_fall_8.gif" div align=middle width = "49%" />
+
+<center>Implict Euler Methods</center>
+
+**<center>St. Venant-Kirchhoff </center>**
+<img src="./gifs/Multiple_2D_STVK_implicit_True_bend_8.gif" div align=middle width = "49%" /><img src="./gifs/Multiple_2D_STVK_implicit_True_fall_8.gif" div align=middle width = "49%" />
+
+**<center>Neohookean elasticity </center>**
+<img src="./gifs/Multiple_2D_Neohookean_implicit_True_bend_8_inv.gif" div align=middle width = "49%" /><img src="./gifs/Multiple_2D_Neohookean_implicit_True_fall_8.gif" div align=middle width = "49%" />
+
 
 ## Reference
 [FEM Simulation of 3D Deformable Solids: A practitioner's guide to theory, discretization and model reduction](http://viterbi-web.usc.edu/~jbarbic/femdefo/)

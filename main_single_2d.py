@@ -37,7 +37,7 @@ if __name__ == "__main__":
                         help='Add gravity')  
     parser.add_argument('--fix', type=bool, default=True,
                         help='Fix a point on the wall')  
-    parser.add_argument('--implict', action='store_true',
+    parser.add_argument('--implict', default=True,
                         help='Implict Euler Method, for STVK and Neohookean')
     args = parser.parse_args()
     

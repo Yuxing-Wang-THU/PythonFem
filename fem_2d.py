@@ -1,5 +1,6 @@
 from matplotlib import pyplot as plt
 from matplotlib import cm 
+from jacobin import JacoBinSolver
 import numpy as np
 import imageio
 import shutil
@@ -14,7 +15,7 @@ def judge(point, rect_pos):
         return False
     if point[0] > rect_pos[0][0] + rect_pos[1][0]:
         return False
-    if point[1] > rect_pos[0][1] +rect_pos[1][1]:
+    if point[1] > rect_pos[0][1] + rect_pos[1][1]:
         return False
     return True
 
@@ -44,8 +45,9 @@ def plot_voxel(node_pos, element_num, element_idx, empty_voxel_index):
         element_y = node_pos[element_idx[ie,:],1]
         dx = np.array([[element_x[1] - element_x[0],element_x[2] - element_x[0]],
                        [element_y[1] - element_y[0],element_y[2] - element_y[0]]])
-        current_area = np.linalg.det(dx)*0.5
-        plt.fill(element_x,element_y, c=cm.Blues(0.5/current_area))
+        # current_area = np.linalg.det(dx)*0.5
+        # plt.fill(element_x,element_y, c=cm.Blues(0.5/current_area))
+        plt.fill(element_x,element_y)
 
 # Deformation
 def Afine_2D(points, theta, tx, ty, sx, sy):
@@ -198,7 +200,8 @@ def implicit_euler_stvk(args, B_m, F, strain, nodal_force,nodal_vel, multiple=Fa
             b[n*2+d] = args.mass * nodal_vel[n,d] + args.dt * nodal_force[n,d]
 
     # X       
-    X = np.dot(np.linalg.inv(A), b)
+    #XX = np.dot(np.linalg.inv(A), b)
+    X = JacoBinSolver(A, b)
     for n in range(3):
         if args.fix and n == 0:
             continue
@@ -280,6 +283,7 @@ def solver(args,A,K,b,node_vel,node_force):
         b[i*2 + 1] = args.mass * node_vel[i,1] + args.dt * node_force[i,1]
         
     X = np.dot(np.linalg.inv(A),b)
+    # X = JacoBinSolver(A, b,iter=1000)
     return X
 
 # Simulation for a single triangle
@@ -316,7 +320,10 @@ def run_fem_simulation_single(args):
 
     # Position after deformation 
     x = Afine_2D(args.ref_node_pos, args.theta, args.tx, args.ty, args.sx, args.sy)
-   
+    
+    # Reflection
+    x = np.array([[3,2],[4,3],[3,3]], dtype=float)
+
     # Plot the triangle after deformation
     plt.fill(x[:,0], x[:,1], 'b')
     plt.text(0.01, 6.8, f'Init Area: {init_area}', fontsize=15, color='red')
@@ -590,7 +597,7 @@ def run_fem_simulation_multiple(args):
                     raise    
 
                 H = -init_area * np.dot(piola,D_m[ie].transpose())
-
+                
                 # Force 1, the first column of H
                 f1 = np.array([H[0,0],H[1,0]]) 
 
@@ -601,9 +608,11 @@ def run_fem_simulation_multiple(args):
                 f0 = - f1 - f2 
                
                 nodal_force[element_idx[ie,0],:] += f0
+                #print(nodal_force[element_idx[ie,0],:])
                 nodal_force[element_idx[ie,1],:] += f1
+                #print(nodal_force[element_idx[ie,1],:])
                 nodal_force[element_idx[ie,2],:] += f2
-                
+                #print(nodal_force[element_idx[ie,2],:])
                 if args.implict:
                     if args.model == 1:
                         dH = implicit_euler_stvk(args, D_m[ie], F, strain, nodal_force, node_vel, multiple=True)
@@ -618,24 +627,31 @@ def run_fem_simulation_multiple(args):
                             didx = n * 2 + d
                             idx = element_idx[ie,1] * 2
                             K[idx,kidx] += dH[didx,0,0]
+                            #print(K[idx,kidx])
                             idx = element_idx[ie,1] * 2 + 1
                             K[idx,kidx] += dH[didx,1,0]
+                            #print(K[idx,kidx])
                             idx = element_idx[ie,2] * 2
                             K[idx,kidx] += dH[didx,0,1]
+                            #print(K[idx,kidx])
                             idx = element_idx[ie,2] * 2 + 1
                             K[idx,kidx] += dH[didx,1,1]
+                            #print(K[idx,kidx])
                             idx = element_idx[ie,0] * 2
                             K[idx,kidx] += - dH[didx,0,0] - dH[didx,0,1]
+                            #print(K[idx,kidx])
                             idx = element_idx[ie,0] * 2 + 1
                             K[idx,kidx] += - dH[didx,1,0] - dH[didx,1,1]
+                            #print(K[idx,kidx])
 
             '''Step 6. Update position''' 
             # Update
             if not args.implict:
                 for i in range(node_num):
-                    acc = nodal_force[i]/args.mass + Gravity
+                    acc = (nodal_force[i] + Gravity)/args.mass
                     node_vel[i] += args.dt*acc
                     node_vel[i] *= np.exp(-args.dt*1)
+                    node_pos[i] += args.dt*node_vel[i]
             else:
                 # Add Gravity
                 for i in range(node_num):
@@ -647,7 +663,10 @@ def run_fem_simulation_multiple(args):
                     node_vel[i,0] = X[i * 2 + 0]
                     node_vel[i,1] = X[i * 2 + 1]
                     node_pos[i,:] += node_vel[i,:] * args.dt
-                    # node_vel[i] *= np.exp(-args.dt * 1.0)
+                    node_vel[i] *= np.exp(-args.dt * 1.0)
+                K = np.zeros((krow,krow))
+                A = np.zeros((krow,krow))
+                b = np.zeros((krow))
 
             # bend
             if args.mode == "bend":
@@ -661,10 +680,21 @@ def run_fem_simulation_multiple(args):
                 # Ball 
                 disp = node_pos[i] - args.ball_pos
                 disp2 = np.sum(np.square(disp))
+
+
                 if disp2 <= args.ball_radius**2:
+                    vec = np.array([1,0])
+                    disp_m = np.sqrt(disp.dot(disp))
+                    vec_m = np.sqrt(vec.dot(vec))
+                    cos_theta = disp.dot(vec)/(disp_m*vec_m)
+                    angle=np.arccos(cos_theta)
+                    modi_x = args.ball_pos[0] + args.ball_radius*cos_theta
+                    modi_y = args.ball_radius*np.sin(angle)
                     NoV = node_vel[i].dot(disp)
                     if NoV < 0:
                         node_vel[i] -= NoV * disp / disp2
+                        node_pos[i] = np.array([modi_x,modi_y])
+
                 # Rectangle boundary condition
                 # if rect_collision(node_pos[i], args.rectangle_pos):
                 #     if args.rectangle_pos[0][0] < node_pos[i][0] < (args.rectangle_pos[0][0]+args.rectangle_pos[1][0]):
@@ -680,7 +710,7 @@ def run_fem_simulation_multiple(args):
                         node_pos[i][j] = 15
                         node_vel[i][j] = -0.99*node_vel[i][j]
 
-                node_pos[i] += args.dt*node_vel[i]
+
     
         # ax.add_patch(args.rectangle)
         ax.add_patch(args.semicircle)

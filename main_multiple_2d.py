@@ -27,7 +27,7 @@ if __name__ == "__main__":
                         help='Empty voxels:[],[2,3,6,7,10,11,14,15],[2,3,6,7]')
     
     # Parameters of FEM
-    parser.add_argument('--mode', type=str, default="fall",
+    parser.add_argument('--mode', type=str, default="bend",
                         help='Mode: bend,fall')
     parser.add_argument('--model', type=int, default=3,
                         help='Constitutive model, 0:Linear, 1:STVK, 2:Co-rotated, 3: Neohookean')
@@ -41,7 +41,7 @@ if __name__ == "__main__":
                         help='Iteration')
     parser.add_argument('--mass', type=float, default=1.0,
                         help='Mass of the point') 
-    parser.add_argument('--implict', action="store_true",
+    parser.add_argument('--implict', default=True,
                         help='Implict Euler Method, for STVK and Neohookean')                               
     args = parser.parse_args()
 
