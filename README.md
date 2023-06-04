@@ -44,7 +44,7 @@ Args
 '--fix', type=bool, default=True, help='Fix a point on the wall' 
 '--implict', action='store_true', help='Implict Euler Method, for STVK and Neohookean'
 ```
-####Visual Results
+#### Visual Results
 **<center>Symplectic Euler Methods</center>**
 <img src="./gifs/single_2D_Linear_implicit_False.gif" div align=middle width = "49%" /><img src="./gifs/single_2D_STVK_implicit_False.gif" div align=middle width = "49%" />
 <img src="./gifs/single_2D_Co-rotated_implicit_False.gif" div align=middle width = "49%" /><img src="./gifs/single_2D_Neohookean_implicit_False.gif" div align=middle width = "49%" />
@@ -73,7 +73,7 @@ Args
 '--mass', type=float, default=1.0, help='Mass of the point'
 '--implict', action='store_true', help='Implict Euler Method, for STVK and Neohookean'
 ```
-####Visual Results
+#### Visual Results
 <center>Symplectic Euler Methods</center>
 
 **<center>Linear Elasticity</center>**
